@@ -1,0 +1,43 @@
+package example;
+
+message SimpleMessage {
+    optional int32 field = 1;
+}
+
+message BasicMessage {
+  enum Enum {
+    ITEM_0 = 0;
+    ITEM_1 = 1;
+    ITEM_2 = 2;
+  }
+
+  optional double   double_field    = 1;
+  optional float    float_field     = 2;
+  optional int32    int32_field     = 3;
+  optional int64    int64_field     = 4;
+  optional uint32   uint32_field    = 5;
+  optional uint64   uint64_field    = 6;
+  optional sint32   sint32_field    = 7;
+  optional sint64   sint64_field    = 8;
+  optional fixed32  fixed32_field   = 9;
+  optional fixed64  fixed64_field   = 10;
+  optional sfixed32 sfixed32_field  = 11;
+  optional sfixed64 sfixed64_field  = 12;
+  optional bool     bool_field      = 13;
+  optional string   string_field    = 14;
+  optional bytes    bytes_field     = 15;
+  optional Enum     enum_field      = 16;
+}
+
+message LabeledMessage {
+  optional bool     optional_field  = 1;
+  required double   required_field  = 2;
+  repeated int32    repeated_field  = 3;
+  optional string   default_field   = 4 [default = "default"];
+}
+
+message NestedMessage {
+  optional SimpleMessage optional_nested_field = 1;
+  required SimpleMessage required_nested_field = 2;
+  repeated SimpleMessage repeated_nested_field = 3;
+}
