@@ -133,7 +133,7 @@ def nested_msg():
 @pytest.fixture()
 def basic_msg_tuple():
     values = (
-        ctypes.c_double(1.7e+308).value,  # double_field
+        1.7e+308,  # double_field
         ctypes.c_float(3.4e+38).value,  # float_field
         2 ** 31 - 1,  # int32_field
         2 ** 63 - 1,  # int64_field

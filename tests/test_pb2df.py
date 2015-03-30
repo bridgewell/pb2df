@@ -1,7 +1,5 @@
 # -*- coding: utf-8 -*-
 
-import ctypes
-
 import pyspark.sql
 
 import example_pb2
@@ -82,24 +80,12 @@ def test_nested_msg_factory(nested_msg, nested_msg_tuple):
     assert factory(nested_msg) == nested_msg_tuple
 
 
-def test_basic_msg_dataframe(sql_ctx, basic_msg):
+def test_basic_msg_dataframe(sql_ctx, basic_msg, basic_msg_tuple):
     pb_msg_type = basic_msg.__class__
-    fields = pb_msg_type.DESCRIPTOR.fields_by_name
-
-    uint32_set = frozenset(('uint32_field', 'fixed32_field'))
-    uint64_set = frozenset(('uint64_field', 'fixed64_field'))
-
     converter = pb2df.Converter(sql_ctx, pb_msg_type)
     df = converter.to_dataframe([basic_msg])
     row = df.first()
-    for field_name, field_desc in fields.iteritems():
-        expected_value = getattr(basic_msg, field_name)
-        if field_name in uint32_set:
-            expected_value = ctypes.c_int32(expected_value).value
-        elif field_name in uint64_set:
-            expected_value = ctypes.c_int64(expected_value).value
-
-        assert getattr(row, field_name) == expected_value
+    assert tuple(row) == basic_msg_tuple
 
 
 def test_nested_msg_dataframe(sql_ctx, nested_msg):
