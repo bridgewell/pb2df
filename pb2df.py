@@ -52,7 +52,9 @@ def convert_field(pb_field):
         value of the given field.
 
     Note:
-      Unsigned integers are represented using their signed counterparts.
+      Since there are no unsigned types in Spark SQL, if the type of field
+      is unsigned integer (`uint32`, `uint64`, `fixed32`, or `fixed64`), it
+      will be converted to its signed counterpart after extracting the value.
 
     """
 
