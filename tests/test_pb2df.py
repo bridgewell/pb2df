@@ -64,8 +64,7 @@ def test_nested_field_getter(nested_msg):
     field_desc = pb_msg_type.DESCRIPTOR.fields_by_name['required_nested_field']
 
     _, getter = pb2df.convert_field(field_desc)
-    _, factory = pb2df.convert_schema(field_desc.message_type)
-    assert getter(nested_msg) == factory(nested_msg.required_nested_field)
+    assert getter(nested_msg) == (999,)
 
 
 def test_repeated_nested_field_getter(nested_msg):
@@ -73,16 +72,14 @@ def test_repeated_nested_field_getter(nested_msg):
     field_desc = pb_msg_type.DESCRIPTOR.fields_by_name['repeated_nested_field']
 
     _, getter = pb2df.convert_field(field_desc)
-    _, factory = pb2df.convert_schema(field_desc.message_type)
-    assert getter(nested_msg) == map(factory, nested_msg.repeated_nested_field)
+    assert getter(nested_msg) == [(1,), (2,)]
 
 
 def test_basic_msg_factory(basic_msg):
     pb_msg_type = basic_msg.__class__
-    fields = pb_msg_type.DESCRIPTOR.fields
-
     _, factory = pb2df.convert_schema(pb_msg_type.DESCRIPTOR)
 
+    fields = pb_msg_type.DESCRIPTOR.fields
     expected_values = tuple(getattr(basic_msg, field.name) for field in fields)
     assert factory(basic_msg) == expected_values
 
@@ -98,7 +95,7 @@ def test_nested_msg_factory(nested_msg):
 
 def test_basic_msg_dataframe(sql_ctx, basic_msg):
     pb_msg_type = basic_msg.__class__
-    field_descs = pb_msg_type.DESCRIPTOR.fields
+    fields = pb_msg_type.DESCRIPTOR.fields_by_name
 
     uint32_set = frozenset(('uint32_field', 'fixed32_field'))
     uint64_set = frozenset(('uint64_field', 'fixed64_field'))
@@ -106,8 +103,7 @@ def test_basic_msg_dataframe(sql_ctx, basic_msg):
     converter = pb2df.Converter(sql_ctx, pb_msg_type)
     df = converter.to_dataframe([basic_msg])
     row = df.first()
-    for field_desc in field_descs:
-        field_name = field_desc.name
+    for field_name, field_desc in fields.iteritems():
         expected_value = getattr(basic_msg, field_name)
         if field_name in uint32_set:
             expected_value = ctypes.c_int32(expected_value).value
