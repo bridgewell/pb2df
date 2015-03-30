@@ -125,3 +125,31 @@ def nested_msg():
     inner_msg2 = msg.repeated_nested_field.add()
     inner_msg2.field = 2
     return msg
+
+
+@pytest.fixture()
+def basic_msg_tuple():
+    values = (
+        ctypes.c_double(1.7e+308).value,  # double_field
+        ctypes.c_float(3.4e+38).value,  # float_field
+        2 ** 31 - 1,  # int32_field
+        2 ** 63 - 1,  # int64_field
+        ctypes.c_int32(2 ** 32 - 1).value,  # uint32_field
+        ctypes.c_int64(2 ** 64 - 1).value,  # uint64_field
+        -2 ** 31,  # sint32_field
+        -2 ** 63,  # sint64_field
+        ctypes.c_int32(1234567890).value,  # fixed32_field
+        ctypes.c_int64(9876543210).value,  # fixed64_field
+        -1234567890,  # sfixed32_field
+        -9876543210,  # sfixed64_field
+        True,  # bool_field
+        'string',  # string_field
+        b'\x00\x01\x02\x03\x04',  # bytes_field
+        example_pb2.BasicMessage.ITEM_2,  # enum_field
+    )
+    return values
+
+
+@pytest.fixture()
+def nested_msg_tuple():
+    return ((0,), (999,), [(1,), (2,)])

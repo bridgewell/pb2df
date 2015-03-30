@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 
+import ctypes
 from itertools import imap
 from operator import attrgetter
 
@@ -29,6 +30,14 @@ _SPARK_SQL_TYPE_MAP = {
 }
 
 
+def _to_int32(n):
+    return ctypes.c_int32(n).value
+
+
+def _to_int64(n):
+    return ctypes.c_int64(n).value
+
+
 def convert_field(pb_field):
     """Convert ProtoBuf field to Spark DataFrame field.
 
@@ -42,6 +51,9 @@ def convert_field(pb_field):
       - `getter` is a function which accepts a ProtoBuf object and extracts
         value of the given field.
 
+    Note:
+      Unsigned integers are represented using their signed counterparts.
+
     """
 
     field_name = pb_field.name
@@ -52,11 +64,15 @@ def convert_field(pb_field):
     is_message_type = field_type == FieldDescriptor.TYPE_MESSAGE
 
     # generate field schema
+    field_factory = None
     if is_message_type:
         df_field_type, field_factory = convert_schema(pb_field.message_type)
     else:
         df_field_type = _SPARK_SQL_TYPE_MAP[field_type]
-        field_factory = None
+        if isinstance(df_field_type, types.IntegerType):
+            field_factory = _to_int32
+        elif isinstance(df_field_type, types.LongType):
+            field_factory = _to_int64
 
     if is_repeated_field:
         df_field_type = types.ArrayType(df_field_type, containsNull=False)
@@ -66,7 +82,7 @@ def convert_field(pb_field):
     # generate field getter
     # note: calling the accessor to get the value of an field which has not
     #       been explicitly set always returns that field's default value.
-    if not is_message_type:
+    if field_factory is None:
         field_getter = attrgetter(field_name)
     elif is_repeated_field:
         field_getter = lambda pb_obj: \
@@ -136,9 +152,6 @@ class Converter(object):
 
         Returns:
           A Spark DataFrame.
-
-        Note:
-          Unsigned integers are represented using their signed counterparts.
 
         """
 
