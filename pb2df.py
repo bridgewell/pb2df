@@ -56,6 +56,10 @@ def convert_field(pb_field):
       is unsigned integer (`uint32`, `uint64`, `fixed32`, or `fixed64`), it
       will be converted to its signed counterpart after extracting the value.
 
+    Note:
+      The getter for optional field with no default value will return `None` if
+      this field is not set for the message.
+
     """
 
     field_name = pb_field.name
@@ -100,8 +104,6 @@ def convert_field(pb_field):
             field_getter = lambda pb_obj: \
                 field_factory(getattr(pb_obj, field_name))
 
-    # note: getter for optional field with no default value should return
-    #       `None` if this field is not set for the message.
     if field_may_be_none:
         inner_field_getter = field_getter
         field_getter = lambda pb_obj: \
