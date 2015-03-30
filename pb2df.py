@@ -83,13 +83,18 @@ def convert_field(pb_field):
     # note: calling the accessor to get the value of an field which has not
     #       been explicitly set always returns that field's default value.
     if field_factory is None:
-        field_getter = attrgetter(field_name)
-    elif is_repeated_field:
-        field_getter = lambda pb_obj: \
-            map(field_factory, getattr(pb_obj, field_name))
+        if is_repeated_field:
+            field_getter = lambda pb_obj: \
+                list(getattr(pb_obj, field_name))
+        else:
+            field_getter = attrgetter(field_name)
     else:
-        field_getter = lambda pb_obj: \
-            field_factory(getattr(pb_obj, field_name))
+        if is_repeated_field:
+            field_getter = lambda pb_obj: \
+                map(field_factory, getattr(pb_obj, field_name))
+        else:
+            field_getter = lambda pb_obj: \
+                field_factory(getattr(pb_obj, field_name))
 
     return field, field_getter
 
