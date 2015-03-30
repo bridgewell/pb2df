@@ -85,8 +85,8 @@ def nested_msg_schema(simple_msg_schema):
 @pytest.fixture()
 def basic_msg():
     msg = example_pb2.BasicMessage()
-    msg.double_field = ctypes.c_double(1.7e+308).value
-    msg.float_field = ctypes.c_float(3.4e+38).value
+    msg.double_field = 1.7e+308
+    msg.float_field = 3.4e+38
     msg.int32_field = 2 ** 31 - 1
     msg.int64_field = 2 ** 63 - 1
     msg.uint32_field = 2 ** 32 - 1
@@ -101,6 +101,7 @@ def basic_msg():
     msg.string_field = 'string'
     msg.bytes_field = b'\x00\x01\x02\x03\x04'
     msg.enum_field = example_pb2.BasicMessage.ITEM_2
+    msg.ParseFromString(msg.SerializeToString())
     return msg
 
 
@@ -113,6 +114,7 @@ def labeled_msg():
     msg.repeated_field.append(2)
     msg.repeated_field.append(3)
     msg.repeated_field.append(4)
+    msg.ParseFromString(msg.SerializeToString())
     return msg
 
 
@@ -124,6 +126,7 @@ def nested_msg():
     inner_msg1.field = 1
     inner_msg2 = msg.repeated_nested_field.add()
     inner_msg2.field = 2
+    msg.ParseFromString(msg.SerializeToString())
     return msg
 
 
