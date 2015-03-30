@@ -114,6 +114,7 @@ def labeled_msg():
     msg.repeated_field.append(2)
     msg.repeated_field.append(3)
     msg.repeated_field.append(4)
+    # ignore msg.default_field
     msg.ParseFromString(msg.SerializeToString())
     return msg
 
@@ -121,6 +122,7 @@ def labeled_msg():
 @pytest.fixture()
 def nested_msg():
     msg = example_pb2.NestedMessage()
+    # ignore msg.optional_nested_field
     msg.required_nested_field.field = 999
     inner_msg1 = msg.repeated_nested_field.add()
     inner_msg1.field = 1
@@ -155,4 +157,4 @@ def basic_msg_tuple():
 
 @pytest.fixture()
 def nested_msg_tuple():
-    return ((0,), (999,), [(1,), (2,)])
+    return (None, (999,), [(1,), (2,)])

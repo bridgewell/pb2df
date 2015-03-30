@@ -64,6 +64,8 @@ def convert_field(pb_field):
     is_field_nullable = field_label != FieldDescriptor.LABEL_REQUIRED
     is_repeated_field = field_label == FieldDescriptor.LABEL_REPEATED
     is_message_type = field_type == FieldDescriptor.TYPE_MESSAGE
+    field_may_be_none = (field_label == FieldDescriptor.LABEL_OPTIONAL and
+                         not pb_field.has_default_value)
 
     # generate field schema
     field_factory = None
@@ -97,6 +99,13 @@ def convert_field(pb_field):
         else:
             field_getter = lambda pb_obj: \
                 field_factory(getattr(pb_obj, field_name))
+
+    # note: getter for optional field with no default value should return
+    #       `None` if this field is not set for the message.
+    if field_may_be_none:
+        inner_field_getter = field_getter
+        field_getter = lambda pb_obj: \
+            inner_field_getter(pb_obj) if pb_obj.HasField(field_name) else None
 
     return field, field_getter
 

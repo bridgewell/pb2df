@@ -54,6 +54,13 @@ def test_default_field_getter():
     assert getter(pb_msg_type()) == field_desc.default_value
 
 
+def test_empty_field_getter():
+    pb_msg_type = example_pb2.SimpleMessage
+    field_desc = pb_msg_type.DESCRIPTOR.fields_by_name['field']
+    _, getter = pb2df.convert_field(field_desc)
+    assert getter(pb_msg_type()) is None
+
+
 def test_nested_field_getter(nested_msg):
     pb_msg_type = nested_msg.__class__
     field_desc = pb_msg_type.DESCRIPTOR.fields_by_name['required_nested_field']
@@ -80,6 +87,14 @@ def test_nested_msg_factory(nested_msg, nested_msg_tuple):
     assert factory(nested_msg) == nested_msg_tuple
 
 
+def test_empty_msg_dataframe(sql_ctx):
+    pb_msg_type = example_pb2.SimpleMessage
+    converter = pb2df.Converter(sql_ctx, pb_msg_type)
+    df = converter.to_dataframe([pb_msg_type()])
+    row = df.first()
+    assert tuple(row) == (None,)
+
+
 def test_basic_msg_dataframe(sql_ctx, basic_msg, basic_msg_tuple):
     pb_msg_type = basic_msg.__class__
     converter = pb2df.Converter(sql_ctx, pb_msg_type)
@@ -94,6 +109,7 @@ def test_nested_msg_dataframe(sql_ctx, nested_msg):
 
     df = converter.to_dataframe([nested_msg])
     row = df.first()
+    assert row.optional_nested_field is None
     assert row.required_nested_field == pyspark.sql.Row(field=999)
     assert row.repeated_nested_field == [pyspark.sql.Row(field=1),
                                          pyspark.sql.Row(field=2)]
