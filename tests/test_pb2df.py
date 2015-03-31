@@ -3,7 +3,7 @@
 import pyspark.sql
 
 import example_pb2
-import pb2df
+import pb2df.convert as pb2df
 
 
 def _test_schema(pb_msg_type, expected_schema):
