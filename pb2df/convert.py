@@ -5,6 +5,7 @@ from itertools import imap
 from operator import attrgetter
 
 from google.protobuf.descriptor import FieldDescriptor
+from pyspark import RDD
 from pyspark.sql import types
 
 __all__ = ('convert_field', 'convert_schema', 'Converter')
@@ -148,17 +149,20 @@ def convert_schema(pb_desc):
 
 class Converter(object):
 
-    def __init__(self, sql_ctx, pb_msg_type):
+    def __init__(self, pb_msg_type, spark_ctx, sql_ctx):
         """Create an converter with given ProtoBuf message type.
 
         Args:
-          sql_ctx (`SQLContext`): a `SQLContext` which is used to create
-            DataFrame.
           pb_msg_type (`GeneratedProtocolMessageType`): a ProtoBuf message
             class which is used to generate the DataFrame schema.
+          spark_ctx (`SparkContext`):
+          sql_ctx (`SQLContext`): a `SQLContext` which is used to create
+            DataFrame.
 
         """
 
+        self._pb_msg_type = pb_msg_type
+        self._spark_ctx = spark_ctx
         self._sql_ctx = sql_ctx
         self._schema, self._factory = convert_schema(pb_msg_type.DESCRIPTOR)
 
@@ -166,15 +170,19 @@ class Converter(object):
         """Convert a sequence of ProtoBuf objects to Spark DataFrame.
 
         Args:
-          pb_objs (iterable of `Message`s): a sequence of ProtoBuf objects.
+          pb_objs (iterable of `Message`s or `RDD` of `Message`s): a sequence
+            of ProtoBuf objects.
 
         Returns:
           A Spark DataFrame.
 
         """
 
+        if not isinstance(pb_objs, RDD):
+            pb_objs = self._spark_ctx.parallelize(pb_objs)
+
         # note: since `SQLContext.createDataFrame()` only accepts a sequence of
         #       `list`s/`tuple`s, we should convert each ProtoBuf object to
         #       tuple before passing it.
-        tuples = imap(self._factory, pb_objs)
+        tuples = pb_objs.map(self._factory)
         return self._sql_ctx.createDataFrame(tuples, schema=self._schema)

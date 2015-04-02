@@ -87,26 +87,25 @@ def test_nested_msg_factory(nested_msg, nested_msg_tuple):
     assert factory(nested_msg) == nested_msg_tuple
 
 
-def test_empty_msg_dataframe(sql_ctx):
+def test_empty_msg_dataframe(spark_ctx, sql_ctx):
     pb_msg_type = example_pb2.SimpleMessage
-    converter = pb2df.Converter(sql_ctx, pb_msg_type)
+    converter = pb2df.Converter(pb_msg_type, spark_ctx, sql_ctx)
     df = converter.to_dataframe([pb_msg_type()])
     row = df.first()
     assert tuple(row) == (None,)
 
 
-def test_basic_msg_dataframe(sql_ctx, basic_msg, basic_msg_tuple):
+def test_basic_msg_dataframe(spark_ctx, sql_ctx, basic_msg, basic_msg_tuple):
     pb_msg_type = basic_msg.__class__
-    converter = pb2df.Converter(sql_ctx, pb_msg_type)
+    converter = pb2df.Converter(pb_msg_type, spark_ctx, sql_ctx)
     df = converter.to_dataframe([basic_msg])
     row = df.first()
     assert tuple(row) == basic_msg_tuple
 
 
-def test_nested_msg_dataframe(sql_ctx, nested_msg):
+def test_nested_msg_dataframe(spark_ctx, sql_ctx, nested_msg):
     pb_msg_type = nested_msg.__class__
-    converter = pb2df.Converter(sql_ctx, pb_msg_type)
-
+    converter = pb2df.Converter(pb_msg_type, spark_ctx, sql_ctx)
     df = converter.to_dataframe([nested_msg])
     row = df.first()
     assert row.optional_nested_field is None

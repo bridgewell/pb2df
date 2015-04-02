@@ -21,9 +21,13 @@ import example_pb2
 
 
 @pytest.fixture(scope='session')
-def sql_ctx():
-    sc = SparkContext()
-    return SQLContext(sc)
+def spark_ctx():
+    return SparkContext()
+
+
+@pytest.fixture(scope='session')
+def sql_ctx(spark_ctx):
+    return SQLContext(spark_ctx)
 
 
 @pytest.fixture()
