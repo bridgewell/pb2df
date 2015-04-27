@@ -26,7 +26,7 @@ _SPARK_SQL_TYPE_MAP = {
     FieldDescriptor.TYPE_SFIXED64: types.LongType(),
     FieldDescriptor.TYPE_BOOL: types.BooleanType(),
     FieldDescriptor.TYPE_STRING: types.StringType(),
-    FieldDescriptor.TYPE_BYTES: types.StringType(),
+    FieldDescriptor.TYPE_BYTES: types.BinaryType(),
     FieldDescriptor.TYPE_ENUM: types.IntegerType(),
 }
 
@@ -78,7 +78,9 @@ def convert_field(pb_field):
         df_field_type, field_factory = convert_schema(pb_field.message_type)
     else:
         df_field_type = _SPARK_SQL_TYPE_MAP[field_type]
-        if isinstance(df_field_type, types.IntegerType):
+        if isinstance(df_field_type, types.BinaryType):
+            field_factory = bytearray
+        elif isinstance(df_field_type, types.IntegerType):
             field_factory = _to_int32
         elif isinstance(df_field_type, types.LongType):
             field_factory = _to_int64

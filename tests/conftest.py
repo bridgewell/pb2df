@@ -55,7 +55,7 @@ def basic_msg_schema():
         types.StructField('sfixed64_field', types.LongType()),
         types.StructField('bool_field', types.BooleanType()),
         types.StructField('string_field', types.StringType()),
-        types.StructField('bytes_field', types.StringType()),
+        types.StructField('bytes_field', types.BinaryType()),
         types.StructField('enum_field', types.IntegerType()),
     ])
     return schema
@@ -153,7 +153,7 @@ def basic_msg_tuple():
         -9876543210,  # sfixed64_field
         True,  # bool_field
         'string',  # string_field
-        b'\x00\x01\x02\x03\x04',  # bytes_field
+        bytearray(b'\x00\x01\x02\x03\x04'),  # bytes_field
         example_pb2.BasicMessage.ITEM_2,  # enum_field
     )
     return values
