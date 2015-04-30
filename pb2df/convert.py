@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
 
 import ctypes
-from itertools import imap
 from operator import attrgetter
 
 from google.protobuf.descriptor import FieldDescriptor
@@ -39,7 +38,7 @@ def _to_int64(n):
     return ctypes.c_int64(n).value
 
 
-def convert_field(pb_field):
+def convert_field(pb_field, custom_fields=None):
     """Convert ProtoBuf field to Spark DataFrame field.
 
     Args:
@@ -63,6 +62,16 @@ def convert_field(pb_field):
 
     """
 
+    field_converters = {}
+    if custom_fields is not None:
+        for k, v in custom_fields.items():
+            try:
+                field_name, sub_field_name = k.split('.', 1)
+                custom_sub_fields = field_converters.setdefault(field_name, {})
+                custom_sub_fields[sub_field_name] = v
+            except ValueError:
+                field_converters[k] = v
+
     field_name = pb_field.name
     field_label = pb_field.label
     field_type = pb_field.type
@@ -75,7 +84,10 @@ def convert_field(pb_field):
     # generate field schema
     field_factory = None
     if is_message_type:
-        df_field_type, field_factory = convert_schema(pb_field.message_type)
+        df_field_type, field_factory = convert_schema(
+            pb_field.message_type, field_converters.get(field_name))
+    elif field_name in field_converters:
+        df_field_type, field_factory = field_converters[field_name]
     else:
         df_field_type = _SPARK_SQL_TYPE_MAP[field_type]
         if isinstance(df_field_type, types.BinaryType):
@@ -115,7 +127,7 @@ def convert_field(pb_field):
     return field, field_getter
 
 
-def convert_schema(pb_desc):
+def convert_schema(pb_desc, custom_fields=None):
     """Convert ProtoBuf schema to Spark DataFrame schema.
 
     Args:
@@ -130,12 +142,12 @@ def convert_schema(pb_desc):
 
     """
 
-    fields = imap(convert_field, pb_desc.fields)
     field_schemas = []
     field_getters = []
     append_field_schema = field_schemas.append
     append_field_getter = field_getters.append
-    for schema, getter in fields:
+    for field in pb_desc.fields:
+        schema, getter = convert_field(field, custom_fields)
         append_field_schema(schema)
         append_field_getter(getter)
 
@@ -151,7 +163,7 @@ def convert_schema(pb_desc):
 
 class Converter(object):
 
-    def __init__(self, pb_msg_type, spark_ctx, sql_ctx):
+    def __init__(self, pb_msg_type, spark_ctx, sql_ctx, custom_fields=None):
         """Create an converter with given ProtoBuf message type.
 
         Args:
@@ -166,7 +178,8 @@ class Converter(object):
         self._pb_msg_type = pb_msg_type
         self._spark_ctx = spark_ctx
         self._sql_ctx = sql_ctx
-        self._schema, self._factory = convert_schema(pb_msg_type.DESCRIPTOR)
+        self._schema, self._factory = convert_schema(
+            pb_msg_type.DESCRIPTOR, custom_fields)
 
     def to_dataframe(self, pb_objs):
         """Convert a sequence of ProtoBuf objects to Spark DataFrame.
