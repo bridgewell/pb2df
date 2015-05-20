@@ -13,7 +13,7 @@ from google.protobuf import descriptor_pb2
 DESCRIPTOR = _descriptor.FileDescriptor(
   name='example.proto',
   package='example',
-  serialized_pb='\n\rexample.proto\x12\x07\x65xample\"\x1e\n\rSimpleMessage\x12\r\n\x05\x66ield\x18\x01 \x01(\x05\"\xb4\x03\n\x0c\x42\x61sicMessage\x12\x14\n\x0c\x64ouble_field\x18\x01 \x01(\x01\x12\x13\n\x0b\x66loat_field\x18\x02 \x01(\x02\x12\x13\n\x0bint32_field\x18\x03 \x01(\x05\x12\x13\n\x0bint64_field\x18\x04 \x01(\x03\x12\x14\n\x0cuint32_field\x18\x05 \x01(\r\x12\x14\n\x0cuint64_field\x18\x06 \x01(\x04\x12\x14\n\x0csint32_field\x18\x07 \x01(\x11\x12\x14\n\x0csint64_field\x18\x08 \x01(\x12\x12\x15\n\rfixed32_field\x18\t \x01(\x07\x12\x15\n\rfixed64_field\x18\n \x01(\x06\x12\x16\n\x0esfixed32_field\x18\x0b \x01(\x0f\x12\x16\n\x0esfixed64_field\x18\x0c \x01(\x10\x12\x12\n\nbool_field\x18\r \x01(\x08\x12\x14\n\x0cstring_field\x18\x0e \x01(\t\x12\x13\n\x0b\x62ytes_field\x18\x0f \x01(\x0c\x12.\n\nenum_field\x18\x10 \x01(\x0e\x32\x1a.example.BasicMessage.Enum\"*\n\x04\x45num\x12\n\n\x06ITEM_0\x10\x00\x12\n\n\x06ITEM_1\x10\x01\x12\n\n\x06ITEM_2\x10\x02\"x\n\x0eLabeledMessage\x12\x16\n\x0eoptional_field\x18\x01 \x01(\x08\x12\x16\n\x0erequired_field\x18\x02 \x02(\x01\x12\x16\n\x0erepeated_field\x18\x03 \x03(\x05\x12\x1e\n\rdefault_field\x18\x04 \x01(\t:\x07\x64\x65\x66\x61ult\"\xb4\x01\n\rNestedMessage\x12\x35\n\x15optional_nested_field\x18\x01 \x01(\x0b\x32\x16.example.SimpleMessage\x12\x35\n\x15required_nested_field\x18\x02 \x02(\x0b\x32\x16.example.SimpleMessage\x12\x35\n\x15repeated_nested_field\x18\x03 \x03(\x0b\x32\x16.example.SimpleMessage')
+  serialized_pb='\n\rexample.proto\x12\x07\x65xample\"\x1e\n\rSimpleMessage\x12\r\n\x05\x66ield\x18\x01 \x01(\x05\"\xb4\x03\n\x0c\x42\x61sicMessage\x12\x14\n\x0c\x64ouble_field\x18\x01 \x01(\x01\x12\x13\n\x0b\x66loat_field\x18\x02 \x01(\x02\x12\x13\n\x0bint32_field\x18\x03 \x01(\x05\x12\x13\n\x0bint64_field\x18\x04 \x01(\x03\x12\x14\n\x0cuint32_field\x18\x05 \x01(\r\x12\x14\n\x0cuint64_field\x18\x06 \x01(\x04\x12\x14\n\x0csint32_field\x18\x07 \x01(\x11\x12\x14\n\x0csint64_field\x18\x08 \x01(\x12\x12\x15\n\rfixed32_field\x18\t \x01(\x07\x12\x15\n\rfixed64_field\x18\n \x01(\x06\x12\x16\n\x0esfixed32_field\x18\x0b \x01(\x0f\x12\x16\n\x0esfixed64_field\x18\x0c \x01(\x10\x12\x12\n\nbool_field\x18\r \x01(\x08\x12\x14\n\x0cstring_field\x18\x0e \x01(\t\x12\x13\n\x0b\x62ytes_field\x18\x0f \x01(\x0c\x12.\n\nenum_field\x18\x10 \x01(\x0e\x32\x1a.example.BasicMessage.Enum\"*\n\x04\x45num\x12\n\n\x06ITEM_0\x10\x00\x12\n\n\x06ITEM_1\x10\x01\x12\n\n\x06ITEM_2\x10\x02\"x\n\x0eLabeledMessage\x12\x16\n\x0eoptional_field\x18\x01 \x01(\x08\x12\x16\n\x0erequired_field\x18\x02 \x02(\x01\x12\x16\n\x0erepeated_field\x18\x03 \x03(\x05\x12\x1e\n\rdefault_field\x18\x04 \x01(\t:\x07\x64\x65\x66\x61ult\"\xb4\x01\n\rNestedMessage\x12\x35\n\x15optional_nested_field\x18\x01 \x01(\x0b\x32\x16.example.SimpleMessage\x12\x35\n\x15required_nested_field\x18\x02 \x02(\x0b\x32\x16.example.SimpleMessage\x12\x35\n\x15repeated_nested_field\x18\x03 \x03(\x0b\x32\x16.example.SimpleMessage\"-\n\x12\x43ustomFieldMessage\x12\x17\n\x0ftimestamp_field\x18\x01 \x02(\x01')
 
 
 
@@ -295,6 +295,34 @@ _NESTEDMESSAGE = _descriptor.Descriptor(
   serialized_end=800,
 )
 
+
+_CUSTOMFIELDMESSAGE = _descriptor.Descriptor(
+  name='CustomFieldMessage',
+  full_name='example.CustomFieldMessage',
+  filename=None,
+  file=DESCRIPTOR,
+  containing_type=None,
+  fields=[
+    _descriptor.FieldDescriptor(
+      name='timestamp_field', full_name='example.CustomFieldMessage.timestamp_field', index=0,
+      number=1, type=1, cpp_type=5, label=2,
+      has_default_value=False, default_value=0,
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      options=None),
+  ],
+  extensions=[
+  ],
+  nested_types=[],
+  enum_types=[
+  ],
+  options=None,
+  is_extendable=False,
+  extension_ranges=[],
+  serialized_start=802,
+  serialized_end=847,
+)
+
 _BASICMESSAGE.fields_by_name['enum_field'].enum_type = _BASICMESSAGE_ENUM
 _BASICMESSAGE_ENUM.containing_type = _BASICMESSAGE;
 _NESTEDMESSAGE.fields_by_name['optional_nested_field'].message_type = _SIMPLEMESSAGE
@@ -304,6 +332,7 @@ DESCRIPTOR.message_types_by_name['SimpleMessage'] = _SIMPLEMESSAGE
 DESCRIPTOR.message_types_by_name['BasicMessage'] = _BASICMESSAGE
 DESCRIPTOR.message_types_by_name['LabeledMessage'] = _LABELEDMESSAGE
 DESCRIPTOR.message_types_by_name['NestedMessage'] = _NESTEDMESSAGE
+DESCRIPTOR.message_types_by_name['CustomFieldMessage'] = _CUSTOMFIELDMESSAGE
 
 class SimpleMessage(_message.Message):
   __metaclass__ = _reflection.GeneratedProtocolMessageType
@@ -328,6 +357,12 @@ class NestedMessage(_message.Message):
   DESCRIPTOR = _NESTEDMESSAGE
 
   # @@protoc_insertion_point(class_scope:example.NestedMessage)
+
+class CustomFieldMessage(_message.Message):
+  __metaclass__ = _reflection.GeneratedProtocolMessageType
+  DESCRIPTOR = _CUSTOMFIELDMESSAGE
+
+  # @@protoc_insertion_point(class_scope:example.CustomFieldMessage)
 
 
 # @@protoc_insertion_point(module_scope)

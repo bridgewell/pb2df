@@ -41,3 +41,7 @@ message NestedMessage {
   required SimpleMessage required_nested_field = 2;
   repeated SimpleMessage repeated_nested_field = 3;
 }
+
+message CustomFieldMessage {
+  required double timestamp_field = 1;
+}

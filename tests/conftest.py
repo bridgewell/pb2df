@@ -12,12 +12,17 @@ except KeyError:
     raise Exception('$SPARK_HOME not set')
 
 import ctypes
+from datetime import datetime
 
 import pytest
 from pyspark import SparkContext
 from pyspark.sql import SQLContext, types
 
 import example_pb2
+
+
+def _to_timestamp(dt):
+    return (dt - datetime(1970, 1, 1)).total_seconds()
 
 
 @pytest.fixture(scope='session')
@@ -87,6 +92,15 @@ def nested_msg_schema(simple_msg_schema):
 
 
 @pytest.fixture()
+def custom_field_msg_schema():
+    schema = types.StructType([
+        types.StructField('timestamp_field', types.TimestampType(),
+                          nullable=False),
+    ])
+    return schema
+
+
+@pytest.fixture()
 def basic_msg():
     msg = example_pb2.BasicMessage()
     msg.double_field = 1.7e+308
@@ -137,6 +151,13 @@ def nested_msg():
 
 
 @pytest.fixture()
+def custom_field_msg():
+    msg = example_pb2.CustomFieldMessage()
+    msg.timestamp_field = _to_timestamp(datetime(2015, 04, 01, 12, 30))
+    return msg
+
+
+@pytest.fixture()
 def basic_msg_tuple():
     values = (
         1.7e+308,  # double_field
@@ -162,3 +183,8 @@ def basic_msg_tuple():
 @pytest.fixture()
 def nested_msg_tuple():
     return (None, (999,), [(1,), (2,)])
+
+
+@pytest.fixture()
+def custom_field_msg_tuple():
+    return (datetime(2015, 04, 01, 12, 30),)
