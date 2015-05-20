@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
 import ctypes
+from collections import namedtuple
 from operator import attrgetter
 
 from google.protobuf.descriptor import FieldDescriptor
@@ -8,6 +9,8 @@ from pyspark import RDD
 from pyspark.sql import types
 
 __all__ = ('convert_field', 'convert_schema', 'Converter')
+
+CustomField = namedtuple('CustomField', ('type', 'converter'))
 
 # type mapping between ProtoBuf and Spark SQL
 _SPARK_SQL_TYPE_MAP = {
