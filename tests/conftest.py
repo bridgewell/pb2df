@@ -27,7 +27,7 @@ def _to_timestamp(dt):
 
 @pytest.fixture(scope='session')
 def spark_ctx():
-    return SparkContext()
+    return SparkContext(pyFiles=('tests/example_pb2.py',))
 
 
 @pytest.fixture(scope='session')
